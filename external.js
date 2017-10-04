@@ -1,7 +1,6 @@
 if (!($ = window.jQuery)) {
   script = document.createElement('script');
-  //script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js';
-  script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js';
+  script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js';
   script.onload = startScraper;
   document.body.appendChild(script);
 } else {
@@ -26,7 +25,7 @@ function startScraper() {
     $('form > table > tbody> tr > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > table > tbody >tr:nth-child(1) > td').length > 0) {
     item.type = 'multiple_scales';
     console.log(item.type);
-    item.content = $('#main > form > table > tbody >tr > td >table > tbody >tr:nth-child(1) > td').toArray().forEach(function(c) {
+    $('#main >  form > table > tbody > tr > td > table > tbody > tr:nth-child(1) > td > p').toArray().forEach(function(c) {
       item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
     });
 
@@ -138,6 +137,8 @@ function startScraper() {
       item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
     });
   }
+  //remove empties
+  item.content = item.content.filter(function(n){ return n !== ''; });
 
   localS.push(item);
   localStorage.setItem('lessonData', JSON.stringify(localS));
