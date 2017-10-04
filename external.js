@@ -1,6 +1,7 @@
 if (!($ = window.jQuery)) {
   script = document.createElement('script');
-  script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js';
+  //script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js';
+  script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js';
   script.onload = startScraper;
   document.body.appendChild(script);
 } else {
@@ -8,6 +9,9 @@ if (!($ = window.jQuery)) {
 }
 
 function startScraper() {
+  //TODO: what about escaping troublesome chars?
+  var banner = '<div id="banner" style="position:absolute;top:47px;padding:5px;font-size:20px;left:0;width:100%;background:green;color:#fff"> Scraping</div>';
+  $('body').append(banner);
   var localS;
   if (!localStorage.getItem('lessonData')){
     localS = [];
@@ -15,81 +19,132 @@ function startScraper() {
   else {
     localS = JSON.parse(localStorage.getItem('lessonData'));
   }
-  var item = {type:'', content:'', choices:[], scale:[]};
+  var item = {type:'', content:[], choices:[], scale:[]};
 
   //multiple scale
   if ($('form > table > tbody> tr > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > table > tbody > tr').length > 0 &&
     $('form > table > tbody> tr > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > table > tbody >tr:nth-child(1) > td').length > 0) {
     item.type = 'multiple_scales';
-    item.content = 'multiple_scales';
-    var a  = $('table[cellpadding=2] p').toArray();
-    //TODO: trim these of line endings
+    console.log(item.type);
+    item.content = $('#main > form > table > tbody >tr > td >table > tbody >tr:nth-child(1) > td').toArray().forEach(function(c) {
+      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
 
-    a.forEach(function(p) {
-      item.choices.push(p.textContent);
+    $('table[cellpadding=2] p').toArray().forEach(function(p) {
+      item.choices.push($.trim(p.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
     });
 
     $('table[cellpadding=2] b').toArray().forEach(function(b) {
-      item.scale.push(b.textContent);
+      item.scale.push($.trim(b.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
     });
   }
-
   //poll
-  if ($('input[type="radio"]').length) {
-    if ($('input[onclick*="multiple_choice"]').length === 0) {
+  if ($('input[type="radio"]').length &&
+    $('input[onclick*="multiple_choice"]').length === 0 &&
+    $('input[onclick*="true_false"]').length === 0 &&
+    $('form > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td').length < 3){
       if ($('form > table > tbody> tr > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > table > tbody >tr:nth-child(1) > td').length === 0) {
-        item.type = 'poll!';
-        item.content = $('#main > form > table > tbody > tr > td  > table  p').text();
+        item.type = 'poll';
+        console.log(item.type);
+        $('#main > form > table > tbody > tr > td > p').toArray().forEach(function(c) {
+          item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+        });
+
+        $('#main > form > table > tbody > tr > td  > table  p').toArray().forEach(function(c) {
+          item.choices.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+        });
+
+
+        $('#main > form > table > tbody > tr > td  > table  p').text();
       }
-    }
+
   }
 
   //single scale
   if ($('#main > form > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) td').length > 3 && $('#main > form > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(3) td').length === 0) {
     item.type = 'scale';
-    item.content = $('#main > form > table > tbody > tr > td  > table  p').text();
+    console.log(item.type);
+    $('#main > form > table > tbody > tr > td  > table > tbody > tr:nth-child(1) > td').toArray().forEach(function(c) {
+      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
+    item.choices =[];
+    $('td[xwidth]').toArray().forEach(function(c) {
+      item.scale.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
+
+
   }
 
   //short answer
-  if ($('input[onclick*="short_answer/reader"]').length) {
+  if ($('input[onclick*="short_answer/reader"]').length && $('#main > form > table > tbody > tr > td em').length ===0) {
     item.type = 'short_answer';
-    item.content = $('#main > form > table > tbody > tr > td p').text();
+    console.log(item.type);
+    $('#main > form > table > tbody > tr > td p').toArray().forEach(function(c) {
+      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
   }
 
   //true/false
   if ($('input[onclick*="true_false"]').length) {
     item.type = 'true_false';
-    item.content = $('#main > form > table > tbody > tr > td  > p').text();
+    console.log(item.type);
+    $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
+      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
   }
 
   //multiple choice
   if ($('input[onclick*="multiple_choice"]').length) {
     item.type = 'multiple_choice';
-    item.content = $('#main > form > table > tbody > tr > td  > p').html() + $('#main > form > table  > tbody > tr > td > table > tbody tr > td:nth-child(3)').text();
+    console.log(item.type);
+    $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
+      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
+    $('#main > form > table  > tbody > tr > td > table > tbody tr > td:nth-child(3)').toArray().forEach(function(c) {
+      item.choices.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
   }
 
   //multiple response
   if ($('input[onclick*="multiple_response"]').length) {
     item.type = 'multiple_response';
-    item.content = $('#main > form > table > tbody > tr > td  > p').text() + $('#main > form > table > tbody > tr > td table p').text();
+    console.log(item.type);
+    $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
+      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
+    var ma_choices  = $('#main > form > table > tbody > tr > td table p').toArray().forEach(function(c) {
+      item.choices.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
   }
 
+  // fill in the blanks
   if ($('input[onclick*="short_answer/reader"]').length && $('#main > form > table > tbody > tr > td em').length) {
     item.type = 'fill_blanks';
-    item.content = $('#main > form > table > tbody > tr > td p').html();
+    console.log(item.type);
+    $('#main > form > table > tbody > tr:nth-child(1) > td > p').toArray().forEach(function(c) {
+      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
+    $('#main > form > table > tbody > tr > td em').toArray().forEach(function(c) {
+      item.choices.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
   }
 
   //if none of the above - it is a note
   item.type = item.type || 'note';
 
   if(item.type === 'note'){
-    item.content = $('#main > form > table > tbody > tr > td p').text();
+    console.log(item.type);
+    $('#main > form > table > tbody > tr > td p').toArray().forEach(function(c) {
+      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    });
   }
 
-  item.content = item.content.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '\n');
   localS.push(item);
   localStorage.setItem('lessonData', JSON.stringify(localS));
   //TODO: add structure to the content (prompt, choices at least)
   // also multiple scales are not returning content
+  var url = $("img[src='/2k/media/icons/inv.next.gif']").parent('a').attr('href').split(':')[1];
+  var gotoNext = new Function (url);
+  gotoNext();
 
 }
