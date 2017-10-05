@@ -1,5 +1,7 @@
 javascript: (function() {
-  var jsCode = document.createElement('script');
-  jsCode.setAttribute('src', 'https://cdn.rawgit.com/gsilver/cangrexo/master/download.js');
-  document.body.appendChild(jsCode);
+  console.log('clicked');
+  var djsCode = document.createElement('script');
+  djsCode.setAttribute('src', 'https://cdn.rawgit.com/gsilver/cangrexo/master/download.js');
+  console.log(djsCode);
+  document.body.appendChild(djsCode);
 }());

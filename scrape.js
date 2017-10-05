@@ -145,8 +145,14 @@ function startScraper() {
   localStorage.setItem('lessonData', JSON.stringify(localS));
   //TODO: add structure to the content (prompt, choices at least)
   // also multiple scales are not returning content
-  var url = $("img[src='/2k/media/icons/inv.next.gif']").parent('a').attr('href').split(':')[1];
-  var gotoNext = new Function (url);
-  gotoNext();
+  if($("img[src='/2k/media/icons/inv.next.gif']").length){
+    var url = $("img[src='/2k/media/icons/inv.next.gif']").parent('a').attr('href').split(':')[1];
+    var gotoNext = new Function (url);
+    gotoNext();
+  }
+  else {
+    alert('This does not seem to be a Lessons question, sorry.')
+  }
+
 
 }
