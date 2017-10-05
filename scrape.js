@@ -27,7 +27,6 @@ function startScraper() {
   if ($('form > table > tbody> tr > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > table > tbody > tr').length > 0 &&
     $('form > table > tbody> tr > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > table > tbody >tr:nth-child(1) > td').length > 0) {
     item.type = 'multiple_scales';
-    console.log(item.type);
     $('#main >  form > table > tbody > tr > td > table > tbody > tr:nth-child(1) > td > p').toArray().forEach(function(c) {
       item.content.push(cleanUpItem(c.textContent));
     });
@@ -47,7 +46,6 @@ function startScraper() {
     $('form > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td').length < 3){
       if ($('form > table > tbody> tr > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > table > tbody >tr:nth-child(1) > td').length === 0) {
         item.type = 'poll';
-        console.log(item.type);
         $('#main > form > table > tbody > tr > td > p').toArray().forEach(function(c) {
           item.content.push(cleanUpItem(c.textContent));
         });
@@ -63,7 +61,6 @@ function startScraper() {
   //single scale
   if ($('#main > form > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) td').length > 3 && $('#main > form > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(3) td').length === 0) {
     item.type = 'scale';
-    console.log(item.type);
     $('#main > form > table > tbody > tr > td  > table > tbody > tr:nth-child(1) > td').toArray().forEach(function(c) {
       item.content.push(cleanUpItem(c.textContent));
     });
@@ -78,7 +75,6 @@ function startScraper() {
   //short answer
   if ($('input[onclick*="short_answer/reader"]').length && $('#main > form > table > tbody > tr > td em').length ===0) {
     item.type = 'short_answer';
-    console.log(item.type);
     $('#main > form > table > tbody > tr > td p').toArray().forEach(function(c) {
       item.content.push(cleanUpItem(c.textContent));
     });
@@ -87,7 +83,6 @@ function startScraper() {
   //true/false
   if ($('input[onclick*="true_false"]').length) {
     item.type = 'true_false';
-    console.log(item.type);
     $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
       item.content.push(cleanUpItem(c.textContent));
     });
@@ -96,7 +91,6 @@ function startScraper() {
   //multiple choice
   if ($('input[onclick*="multiple_choice"]').length) {
     item.type = 'multiple_choice';
-    console.log(item.type);
     $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
       item.content.push(cleanUpItem(c.textContent));
     });
@@ -108,7 +102,6 @@ function startScraper() {
   //multiple response
   if ($('input[onclick*="multiple_response"]').length) {
     item.type = 'multiple_response';
-    console.log(item.type);
     $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
       item.content.push(cleanUpItem(c.textContent));
     });
@@ -120,7 +113,6 @@ function startScraper() {
   // fill in the blanks
   if ($('input[onclick*="short_answer/reader"]').length && $('#main > form > table > tbody > tr > td em').length) {
     item.type = 'fill_blanks';
-    console.log(item.type);
     $('#main > form > table > tbody > tr:nth-child(1) > td > p').toArray().forEach(function(c) {
       item.content.push(cleanUpItem(c.textContent));
     });
@@ -133,7 +125,6 @@ function startScraper() {
   item.type = item.type || 'note';
 
   if(item.type === 'note'){
-    console.log(item.type);
     $('#main > form > table > tbody > tr > td p').toArray().forEach(function(c) {
       item.content.push(cleanUpItem(c.textContent));
     });
@@ -151,8 +142,7 @@ function startScraper() {
     gotoNext();
   }
   else {
-    alert('This does not seem to be a Lessons question, sorry.')
+    $('#banner').fadeOut();
+    alert('This does not seem to be a Lessons question, sorry. Did you mean to download the question?');
   }
-
-
 }

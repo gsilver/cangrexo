@@ -4,7 +4,6 @@ if (!($ = window.jQuery)) {
   script.onload = startDownload;
   document.body.appendChild(script);
 } else {
-  console.log('all ok');
   startDownload();
 }
 
@@ -20,11 +19,12 @@ function downloadCSVFile(data) {
   document.body.appendChild(link); // Required for FF
   setTimeout(function() {
     link.click();
+    localStorage.removeItem('lessonData');
   }, 800);
 }
 
 function startDownload() {
-  console.log('start download');
+
   if (!localStorage.getItem('lessonData')) {
     alert('No lesson data to download - scrape questions and try again');
   } else {
