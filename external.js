@@ -7,6 +7,11 @@ if (!($ = window.jQuery)) {
   startScraper();
 }
 
+var cleanUpItem = function(item){
+  return $.trim(item.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '').replace(/"/g,'\"'));
+};
+
+
 function startScraper() {
   //TODO: what about escaping troublesome chars?
   var banner = '<div id="banner" style="position:absolute;top:47px;padding:5px;font-size:20px;left:0;width:100%;background:green;color:#fff"> Scraping</div>';
@@ -26,15 +31,15 @@ function startScraper() {
     item.type = 'multiple_scales';
     console.log(item.type);
     $('#main >  form > table > tbody > tr > td > table > tbody > tr:nth-child(1) > td > p').toArray().forEach(function(c) {
-      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.content.push(cleanUpItem(c.textContent));
     });
 
-    $('table[cellpadding=2] p').toArray().forEach(function(p) {
-      item.choices.push($.trim(p.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    $('table[cellpadding=2] p').toArray().forEach(function(c) {
+      item.choices.push(cleanUpItem(c.textContent));
     });
 
-    $('table[cellpadding=2] b').toArray().forEach(function(b) {
-      item.scale.push($.trim(b.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+    $('table[cellpadding=2] b').toArray().forEach(function(c) {
+      item.scale.push(cleanUpItem(c.textContent));
     });
   }
   //poll
@@ -46,15 +51,13 @@ function startScraper() {
         item.type = 'poll';
         console.log(item.type);
         $('#main > form > table > tbody > tr > td > p').toArray().forEach(function(c) {
-          item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+          item.content.push(cleanUpItem(c.textContent));
         });
 
         $('#main > form > table > tbody > tr > td  > table  p').toArray().forEach(function(c) {
-          item.choices.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+          item.choices.push(cleanUpItem(c.textContent));
         });
-
-
-        $('#main > form > table > tbody > tr > td  > table  p').text();
+        //$('#main > form > table > tbody > tr > td  > table  p').text();
       }
 
   }
@@ -64,11 +67,11 @@ function startScraper() {
     item.type = 'scale';
     console.log(item.type);
     $('#main > form > table > tbody > tr > td  > table > tbody > tr:nth-child(1) > td').toArray().forEach(function(c) {
-      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.content.push(cleanUpItem(c.textContent));
     });
     item.choices =[];
     $('td[xwidth]').toArray().forEach(function(c) {
-      item.scale.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.scale.push(cleanUpItem(c.textContent));
     });
 
 
@@ -79,7 +82,7 @@ function startScraper() {
     item.type = 'short_answer';
     console.log(item.type);
     $('#main > form > table > tbody > tr > td p').toArray().forEach(function(c) {
-      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.content.push(cleanUpItem(c.textContent));
     });
   }
 
@@ -88,7 +91,7 @@ function startScraper() {
     item.type = 'true_false';
     console.log(item.type);
     $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
-      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.content.push(cleanUpItem(c.textContent));
     });
   }
 
@@ -97,10 +100,10 @@ function startScraper() {
     item.type = 'multiple_choice';
     console.log(item.type);
     $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
-      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.content.push(cleanUpItem(c.textContent));
     });
     $('#main > form > table  > tbody > tr > td > table > tbody tr > td:nth-child(3)').toArray().forEach(function(c) {
-      item.choices.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.choices.push(cleanUpItem(c.textContent));
     });
   }
 
@@ -109,10 +112,10 @@ function startScraper() {
     item.type = 'multiple_response';
     console.log(item.type);
     $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
-      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.content.push(cleanUpItem(c.textContent));
     });
     var ma_choices  = $('#main > form > table > tbody > tr > td table p').toArray().forEach(function(c) {
-      item.choices.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.choices.push(cleanUpItem(c.textContent));
     });
   }
 
@@ -121,10 +124,10 @@ function startScraper() {
     item.type = 'fill_blanks';
     console.log(item.type);
     $('#main > form > table > tbody > tr:nth-child(1) > td > p').toArray().forEach(function(c) {
-      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.content.push(cleanUpItem(c.textContent));
     });
     $('#main > form > table > tbody > tr > td em').toArray().forEach(function(c) {
-      item.choices.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.choices.push(cleanUpItem(c.textContent));
     });
   }
 
@@ -134,7 +137,7 @@ function startScraper() {
   if(item.type === 'note'){
     console.log(item.type);
     $('#main > form > table > tbody > tr > td p').toArray().forEach(function(c) {
-      item.content.push($.trim(c.textContent.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '')));
+      item.content.push(cleanUpItem(c.textContent));
     });
   }
   //remove empties
