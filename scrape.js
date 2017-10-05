@@ -7,13 +7,11 @@ if (!($ = window.jQuery)) {
   startScraper();
 }
 
-var cleanUpItem = function(item){
-  return $.trim(item.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '').replace(/"/g,'\"'));
-};
-
-
 function startScraper() {
-  //TODO: what about escaping troublesome chars?
+  var cleanUpItem = function(item){
+    return $.trim(item.replace(/\n\s*\n|\r\n\s*\r\n|\r\r/g, '').replace(/"/g,'\"'));
+  };
+
   var banner = '<div id="banner" style="position:absolute;top:47px;padding:5px;font-size:20px;left:0;width:100%;background:green;color:#fff"> Scraping</div>';
   $('body').append(banner);
   var localS;
