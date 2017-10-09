@@ -110,7 +110,7 @@ function downloadTxtFile(data) {
   document.body.appendChild(link); // Required for FF
   setTimeout(function() {
     link.click();
-    //localStorage.removeItem('lessonData');
+    localStorage.removeItem('lessonData');
   }, 800);
 }
 
@@ -123,7 +123,6 @@ function startDownload() {
     if (window.confirm("When you download the scrape results you will also reset them.\n Are you sure you are done scraping this lesson?")) {
       localS = JSON.parse(localStorage.getItem('lessonData'));
       downloadTxtFile(localS);
-      //downloadJSONFile(localS);
     }
   }
 }
