@@ -11,21 +11,21 @@ if (!($ = window.jQuery)) {
 function itemTypeResolver(type) {
   switch (type) {
     case 'note':
-      return '[[Text]]';
+      return '[[Question:Text]]';
     case 'short_answer':
-      return '[[Essay]]';
+      return '[[Question:TextEntry]]';
     case 'multiple_choice':
-      return '[[MC]]';
+      return '[[Question:MC:SingleAnswer]]';
     case 'multiple_response':
-      return '[[MultipleAnswer]]';
+      return '[[Question:MC:MultipleAnswer:Vertical]]';
     case 'scale':
-      return '[[Matrix]]';
+      return '[[Question:Matrix]]';
     case 'multiple_scales':
-      return '[[Matrix]]';
+      return '[[Question:Matrix]]';
     case 'poll':
-      return '[[MC]]';
+      return '[[Question:MC:SingleAnswer]]';
     case 'true_false':
-      return '[[MC]]';
+      return '[[Question:MC:SingleAnswer]]';
     case 'fill_blanks':
       return '[[Essay]]';
     default:
@@ -34,29 +34,45 @@ function itemTypeResolver(type) {
 }
 
 function textify(data) {
-  var txt = '';
+  var txt = '[[AdvancedFormat]]' + '\n' ;
   var i = 0;
   data.forEach(
     function(item) {
       if (item.type !== 'fill_blanks') {
-        i = i + 1;
-        txt = txt + '\n' + i + '.' + item.content + '\n' + itemTypeResolver(item.type) + '\n';
-        if(item.choices.length){
-          txt = txt + '\n';
+        txt = txt + '\n' + itemTypeResolver(item.type) + '\n' + item.content + '\n';
+        if (item.choices.length) {
+          txt = txt + '[[Choices]]' + '\n';
         }
         item.choices.forEach(
           function(choice) {
             txt = txt + choice + '\n';
           });
 
-          if(item.scale.length){
-            txt = txt + '\n';
+        if (item.type === "multiple_scales") {
+
+          if (item.scale.length) {
+            txt = txt + '[[AdvancedAnswers]]';
           }
 
-        item.scale.forEach(
-          function(scale) {
-            txt = txt + scale + '\n';
-          });
+          item.scale.forEach(
+            function(scale) {
+              txt = txt + '\n' + '[[Answer]]' + '\n' + scale + '\n';
+            });
+
+        } else {
+
+          if (item.scale.length) {
+            txt = txt + '[[Choices]]' + '\n';
+          }
+
+          item.scale.forEach(
+            function(scale) {
+              txt = txt + scale + '\n';
+            });
+
+        }
+
+
       }
     }
   );
