@@ -60,21 +60,18 @@ function startScraper() {
         item.choices.push(cleanUpItem(c.textContent));
       });
     }
-
   }
 
   //single scale
   if ($('#main > form > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) td').length > 3 && $('#main > form > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(3) td').length === 0) {
     item.type = 'scale';
     $('#main > form > table > tbody > tr > td  > table > tbody > tr:nth-child(1) > td').toArray().forEach(function(c) {
-      item.content.push(cleanUpItem(c.textContent));
+      item.choices.push(cleanUpItem(c.textContent));
     });
-    item.choices = [];
+    //item.choices = [];
     $('td[xwidth]').toArray().forEach(function(c) {
       item.scale.push(cleanUpItem(c.textContent));
     });
-
-
   }
 
   //short answer
@@ -111,10 +108,24 @@ function startScraper() {
     $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
       item.content.push(cleanUpItem(c.textContent));
     });
-    var ma_choices = $('#main > form > table > tbody > tr > td table p').toArray().forEach(function(c) {
+    $('#main > form > table > tbody > tr > td table p').toArray().forEach(function(c) {
       item.choices.push(cleanUpItem(c.textContent));
     });
 
+  }
+
+  if ($('input[type="checkbox"]').length && $('input[onclick*="multiple_response"]').length ===0) {
+    item.type = 'multiple_response_with_sauce';
+    $('#main > form > table > tbody > tr > td  > p').toArray().forEach(function(c) {
+      item.content.push(cleanUpItem(c.textContent));
+    });
+    $('#main > form > table > tbody > tr > td table tr > td:nth-child(3)').toArray().forEach(function(c) {
+      var extra_sauce ='';
+      if($(c).find('textarea').length ||$(c).find('input[type="text"]').length) {
+        extra_sauce = '**** Export Note ****: this should be a text entry - edit with Qualtrics';
+      }
+      item.choices.push(cleanUpItem(c.textContent) + ' ' + extra_sauce);
+    });
   }
 
   // fill in the blanks
@@ -125,6 +136,13 @@ function startScraper() {
     });
     $('#main > form > table > tbody > tr > td em').toArray().forEach(function(c) {
       item.choices.push(cleanUpItem(c.textContent));
+    });
+  }
+
+  if ($('input[type="text"]').length) {
+    item.type = 'text_input';
+    $('#main > form > table > tbody > tr > td > table > tbody > tr > td > p').toArray().forEach(function(c) {
+      item.content.push(cleanUpItem(c.textContent) + '**** Export Note: ***** the original question had fill in the blanks - edit with Qualtrics');
     });
   }
 
@@ -140,10 +158,7 @@ function startScraper() {
   item.content = item.content.filter(function(n) {
     return n !== '';
   });
-
-  //console.log(itemAsText(item));
   localS.push(item);
-
 
   localStorage.setItem('lessonData', JSON.stringify(localS));
 

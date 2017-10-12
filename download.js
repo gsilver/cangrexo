@@ -26,6 +26,10 @@ function itemTypeResolver(type) {
       return '[[Question:MC:SingleAnswer]]';
     case 'true_false':
       return '[[Question:MC:SingleAnswer]]';
+    case 'multiple_response_with_sauce':
+      return '[[Question:MC:MultipleAnswer:Vertical]]';
+    case 'text_input':
+      return '[[Question:Text]]';
     case 'fill_blanks':
       return '[[Essay]]';
     default:
@@ -48,7 +52,7 @@ function textify(data) {
             txt = txt + choice + '\n';
           });
 
-        if (item.type === "multiple_scales") {
+        if (item.type === "multiple_scales" || item.type === "scale") {
 
           if (item.scale.length) {
             txt = txt + '[[AdvancedAnswers]]';
@@ -102,7 +106,6 @@ function downloadTxtFile(data) {
   // credit: http://stackoverflow.com/questions/14964035/how-to-export-javascript-array-info-to-csv-on-client-side
   var txtContent = "data:text/plain;charset=utf-8,";
   txtContent = txtContent + textify(data);
-  console.log(txtContent);
   var encodedUri = encodeURI(txtContent);
   var link = document.createElement("a");
   link.setAttribute("href", encodedUri);
